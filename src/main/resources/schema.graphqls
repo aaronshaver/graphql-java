@@ -2,6 +2,10 @@ type Query {
   bookById(id: ID): Book
 }
 
+type Mutation {
+  createAuthor(input: AuthorInput): Author
+}
+
 type Book {
   id: ID
   name: String
@@ -11,6 +15,11 @@ type Book {
 
 type Author {
   id: ID
+  firstName: String
+  lastName: String
+}
+
+input AuthorInput {
   firstName: String
   lastName: String
 }
