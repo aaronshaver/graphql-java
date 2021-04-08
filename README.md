@@ -2,7 +2,7 @@
 
 Code challenge to myself to get a GraphQL server running
 
-Note: doesn't support mutations yet. I haven't had time to loop back and add that.
+In-memory data storage to keep things simple
 
 ## Usage
 
