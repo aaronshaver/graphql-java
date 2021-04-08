@@ -4,9 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import graphql.schema.DataFetcher;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class GraphQLDataFetchers {
@@ -32,7 +30,8 @@ public class GraphQLDataFetchers {
             )
     );
 
-    private final static List<Map<String, String>> authors = Arrays.asList(
+    private int id = 3;
+    private final ArrayList<Map<String, String>> authors = new ArrayList<>(Arrays.asList(
             ImmutableMap.of(
                     "id", "author-1",
                     "firstName", "Brandon",
@@ -48,7 +47,7 @@ public class GraphQLDataFetchers {
                     "firstName", "James",
                     "lastName", "Corey"
             )
-    );
+    ));
 
     public DataFetcher getBookByIdDataFetcher() {
         return dataFetchingEnvironment -> {
@@ -73,4 +72,39 @@ public class GraphQLDataFetchers {
         };
     }
 
+    public DataFetcher getAuthorWithoutBookDataFetcher() {
+        return dataFetchingEnvironment -> {
+            String authorId = dataFetchingEnvironment.getArgument("id");
+            return authors
+                    .stream()
+                    .filter(author -> author.get("id").equals(authorId))
+                    .findFirst()
+                    .orElse(null);
+        };
+    }
+
+    public DataFetcher createAuthorDataFetcher() {
+        return dataFetchingEnvironment -> {
+            Map<String, Object> input =  dataFetchingEnvironment.getArgument("input");
+            String firstName = (String) input.get("firstName");
+            String lastName = (String) input.get("lastName");
+
+            // obviously this isn't thread-safe / concurrency-safe but this is just a proof of concept / toy project
+            id++;
+            final String newId = "author-" + id;
+
+            authors.add(
+                    ImmutableMap.of(
+                            "id", newId,
+                            "firstName", firstName,
+                            "lastName", lastName
+                    ));
+
+            return authors
+                    .stream()
+                    .filter(author -> author.get("id").equals(newId))
+                    .findFirst()
+                    .orElse(null);
+        };
+    }
 }
